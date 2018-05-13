@@ -1,4 +1,4 @@
-package in.shagunakarsh;
+package in.shagunakarsh.config;
 
 import in.shagunakarsh.utils.FileUtils;
 import in.shagunakarsh.utils.PostApplicationStartup;

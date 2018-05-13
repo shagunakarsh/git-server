@@ -9,19 +9,25 @@ src/resources/git-server.properties
 ``
 
 Compile using:
-
+--
 ``
 mvn clean compile package
 ``
 
 Run using:
-
+--
 ``
 java -jar target/git-server-*.jar
 ``
 
 By default git-server is hosted on port 8080,
 web api for viewing files is hosted on port 8090
+
+Api Documentation (Swagger-UI):
+--
+``
+http://localhost:8090/swagger-ui.html
+``
 
 Clone Repo:
 --
@@ -41,6 +47,6 @@ Functionality:
 
 TODOs:
 --
-1. Git Push
-2. Support Multiple repositories
+1. Git Push with credentials
+2. ~~Support Multiple repositories~~
 3. ~~Simple UI for viewing repository files~~

@@ -6,6 +6,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.http.server.GitServlet;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.slf4j.Logger;
@@ -30,8 +31,7 @@ public class GitUtils {
         LOGGER.info("rootPath: {}", rootPath);
         File file = new File(rootPath);
         if(file.exists()) {
-            LOGGER.info("rootPath exists: {} so deleting(recursively) and recreating directory", rootPath);
-            deleteDirectory(file);
+            LOGGER.info("rootPath exists: {}", rootPath);
         } else if(!file.mkdirs()) {
             throw new RuntimeException("Error creating dir: " + rootPath);
         }
@@ -74,13 +74,17 @@ public class GitUtils {
         // prepare a new folder
         File localPath = new File(repoPath);
 
-        if(!localPath.mkdirs()) {
-            throw new IOException("Could not create directory " + localPath);
-        }
+        Repository repository;
 
-        // create the directory
-        Repository repository = FileRepositoryBuilder.create(new File(localPath, ".git"));
-        repository.create();
+        if(!localPath.mkdirs()) {
+            LOGGER.info("repository {} already exists!!", repoPath);
+            //use existing
+            repository = new FileRepository(new File(localPath, ".git"));
+        } else {
+            // create the repository
+            repository = FileRepositoryBuilder.create(new File(localPath, ".git"));
+            repository.create();
+        }
 
         return repository;
     }
@@ -88,7 +92,7 @@ public class GitUtils {
     public void populateRepository(Repository repository) throws IOException, GitAPIException {
         try (Git git = new Git(repository)) {
             File myfile = new File(repository.getDirectory().getParent(), "README.md");
-            if(!myfile.createNewFile()) {
+            if(!myfile.exists() && !myfile.createNewFile()) {
                 throw new IOException("Could not create file " + myfile);
             }
 
