@@ -48,6 +48,16 @@ public class FileUtils {
         return absPath.substring(repoPath.length()+1);
     }
 
+    boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
+
     public String getRootPath() {
         return rootPath;
     }

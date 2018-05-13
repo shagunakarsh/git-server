@@ -9,9 +9,16 @@ import org.eclipse.jgit.http.server.GitServlet;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.ReceivePack;
+import org.eclipse.jgit.transport.UploadPack;
+import org.eclipse.jgit.transport.resolver.ReceivePackFactory;
+import org.eclipse.jgit.transport.resolver.ServiceNotAuthorizedException;
+import org.eclipse.jgit.transport.resolver.ServiceNotEnabledException;
+import org.eclipse.jgit.transport.resolver.UploadPackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 
@@ -36,7 +43,7 @@ public class GitUtils {
             throw new RuntimeException("Error creating dir: " + rootPath);
         }
         Repository repository = this.createNewRepository(rootPath + repoName);
-        this.populateRepository(repository);
+
         GitServlet gitServlet = this.createGitServlet(repository);
         Server server = this.configureAndStartHttpServer(gitServlet);
         server.join();
@@ -46,9 +53,26 @@ public class GitUtils {
 
     public GitServlet createGitServlet(Repository repository) {
         GitServlet gs = new GitServlet();
+        // To enable git clone
         gs.setRepositoryResolver((req, name) -> {
             repository.incrementOpen();
             return repository;
+        });
+
+        //To enable git push (receive objects)
+        gs.setReceivePackFactory(new ReceivePackFactory<HttpServletRequest>() {
+            @Override
+            public ReceivePack create(HttpServletRequest httpServletRequest, Repository repository) throws ServiceNotEnabledException, ServiceNotAuthorizedException {
+                return new ReceivePack(repository);
+            }
+        });
+
+        //To enable copy from another repo
+        gs.setUploadPackFactory(new UploadPackFactory<HttpServletRequest>() {
+            @Override
+            public UploadPack create(HttpServletRequest httpServletRequest, Repository repository) throws ServiceNotEnabledException, ServiceNotAuthorizedException {
+                return new UploadPack(repository);
+            }
         });
 
         return gs;
@@ -68,7 +92,7 @@ public class GitUtils {
         return server;
     }
 
-    public Repository createNewRepository(String repoPath) throws IOException {
+    public Repository createNewRepository(String repoPath) throws IOException, GitAPIException {
 
         LOGGER.info("repoPath: {}", repoPath);
         // prepare a new folder
@@ -84,6 +108,7 @@ public class GitUtils {
             // create the repository
             repository = FileRepositoryBuilder.create(new File(localPath, ".git"));
             repository.create();
+            populateRepository(repository);
         }
 
         return repository;
@@ -100,18 +125,8 @@ public class GitUtils {
 
             System.out.println("Added file " + myfile + " to repository at " + repository.getDirectory());
 
-            git.commit().setMessage("Test-Checkin").call();
+            git.commit().setMessage("Readme-Checkin").call();
         }
-    }
-
-    boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
     }
 
     public int getPort() {

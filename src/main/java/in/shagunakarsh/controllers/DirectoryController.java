@@ -3,6 +3,7 @@ package in.shagunakarsh.controllers;
 import in.shagunakarsh.utils.FileUtils;
 import in.shagunakarsh.utils.GitUtils;
 import io.swagger.annotations.ApiOperation;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class DirectoryController {
 
     @ApiOperation(value = "POST Api to create new Git Repository")
     @RequestMapping(value = "/{repo}", method = RequestMethod.POST)
-    public String createRepo(@PathVariable String repo, Model model) throws IOException {
+    public String createRepo(@PathVariable String repo, Model model) throws IOException, GitAPIException {
         gitUtils.createNewRepository(gitUtils.getRootPath() + repo);
         model.addAttribute("name", repo);
         model.addAttribute("fileMap", fileUtils.getFileMap(repo));
