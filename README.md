@@ -47,6 +47,6 @@ Functionality:
 
 TODOs:
 --
-1. Git Push with credentials
+1. Git Push with~~out~~ credentials
 2. ~~Support Multiple repositories~~
 3. ~~Simple UI for viewing repository files~~
