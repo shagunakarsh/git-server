@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Repository: File List</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <p th:text="'Repository: ' + ${name} + '!'" />
+    <div th:each="item: ${fileMap}">
+        <a th:href="@{/repo/{name}/files/(name=${name}, path=${item.key})}" th:if="${item.value}" th:text="${item.key}"></a>
+        <div th:unless="${item.value}" th:text="${item.key}"></div>
+    </div>
+</body>
+</html>

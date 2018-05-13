@@ -1,5 +1,6 @@
 package in.shagunakarsh;
 
+import in.shagunakarsh.utils.FileUtils;
 import in.shagunakarsh.utils.PostApplicationStartup;
 import in.shagunakarsh.utils.GitUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,10 @@ public class BeanConfig {
         GitUtils gitUtils = new GitUtils(environment.getProperty("git.server.root"));
         gitUtils.setPort(environment.getProperty("git.server.port", Integer.class).intValue());
         return gitUtils;
+    }
+
+    @Bean("fileUtils")
+    public FileUtils fileUtils() {
+        return new FileUtils(environment.getProperty("git.server.root"));
     }
 }

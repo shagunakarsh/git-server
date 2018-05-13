@@ -43,4 +43,4 @@ TODOs:
 --
 1. Git Push
 2. Support Multiple repositories
-3. UI for viewing repository files
+3. ~~Simple UI for viewing repository files~~
