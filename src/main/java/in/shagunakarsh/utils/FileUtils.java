@@ -21,7 +21,7 @@ public class FileUtils {
     }
 
     public Map<String, Boolean> getFileMap(String repo) {
-        String path = rootPath + repo;
+        String path = rootPath + File.separator + repo;
         return getFileMap(getFileList(path), repo);
     }
 
@@ -46,5 +46,13 @@ public class FileUtils {
     public String getRelPath(String absPath, String repo) {
         String repoPath = rootPath + repo;
         return absPath.substring(repoPath.length()+1);
+    }
+
+    public String getRootPath() {
+        return rootPath;
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
 }
