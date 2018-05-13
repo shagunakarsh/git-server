@@ -6,10 +6,16 @@ Update properties in
 src/resources/git-server.properties
 
 Compile using:
+
+``
 mvn clean compile package
+``
 
 Run using:
+
+``
 java -jar target/git-server-*.jar
+``
 
 By default git-server is hosted on port 8080,
 web api for viewing files is hosted on port 8090
